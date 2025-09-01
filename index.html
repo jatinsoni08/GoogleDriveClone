@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Google Drive Clone</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body class="bg-gray-100 min-h-screen font-sans flex flex-col">
+    <header
+      class="bg-white shadow-sm py-3 px-4 md:px-6 flex justify-between items-center"
+    >
+      <!-- Left Section -->
+      <div class="flex items-center space-x-2">
+        <!-- Hamburger Menu (mobile only) -->
+        <button
+          id="menuBtn"
+          class="md:hidden p-2 rounded-full hover:bg-gray-200"
+        >
+          <i class="fas fa-bars text-gray-600 text-lg"></i>
+        </button>
+
+        <!-- Logo + Drive text (desktop only) -->
+        <div class="hidden md:flex items-center space-x-2">
+          <img
+            src="//ssl.gstatic.com/images/branding/product/1x/drive_2020q4_48dp.png"
+            alt="Drive Logo"
+            class="w-8 h-8 md:w-10 md:h-10"
+          />
+          <span class="text-xl md:text-2xl font-medium text-gray-600">
+            <a href="#">Drive</a>
+          </span>
+        </div>
+      </div>
+
+      <!-- Search Bar -->
+      <div class="flex-1 max-w-md mx-2 md:mx-6">
+        <div class="relative">
+          <input
+            type="text"
+            placeholder="Search in Drive"
+            class="w-full py-2 px-4 pl-10 bg-[#e9eef6] rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm md:text-base"
+          />
+          <i class="fas fa-search absolute left-3 top-3 text-gray-500"></i>
+        </div>
+      </div>
+
+      <!-- Right Section -->
+      <div class="flex items-center space-x-2 md:space-x-4">
+        <!-- Settings + App Icon (desktop only) -->
+        <button class="hidden md:block p-2 rounded-full hover:bg-gray-200">
+          <i class="fas fa-cog text-gray-600 text-base"></i>
+        </button>
+        <div
+          class="hidden md:flex w-6 h-6 md:w-8 md:h-8 items-center justify-center"
+        >
+          <img
+            src="https://ssl.gstatic.com/gb/images/bar/al-icon.png"
+            alt="app icon"
+            class="w-4 h-4 md:w-6 md:h-6"
+          />
+        </div>
+
+        <!-- J avatar (always visible) -->
+        <div
+          class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold text-sm"
+        >
+          J
+        </div>
+      </div>
+    </header>
+
+    <!-- Sidebar (Mobile Drawer) -->
+    <div
+      id="mobileSidebar"
+      class="fixed inset-y-0 left-0 w-64 bg-white shadow-lg transform -translate-x-full transition-transform duration-300 ease-in-out z-50"
+    >
+      <div class="p-4 flex justify-between items-center border-b">
+        <h2 class="text-lg font-semibold text-gray-700">Google Drive</h2>
+        <button id="closeBtn" class="p-2 rounded-full hover:bg-gray-200">
+          <i class="fas fa-times text-gray-600"></i>
+        </button>
+      </div>
+      <nav class="p-4 space-y-3">
+        <a href="#" class="block text-gray-700 hover:text-blue-500">
+          <i class="fas fa-clock mr-3"></i>Recent</a
+        >
+        <a href="#" class="block text-gray-700 hover:text-blue-500">
+          <i class="fas fa-check-double mr-3"></i>Offline</a
+        >
+        <a href="#" class="block text-gray-700 hover:text-blue-500">
+          <i class="fas fa-trash mr-3" aria-hidden="true"></i>Trash</a
+        >
+        <a href="#" class="block text-gray-700 hover:text-blue-500">
+          <i class="fas fa-ban mr-3"></i>Spam</a
+        >
+        <a href="#" class="block text-gray-700 hover:text-blue-500">
+          <i class="fas fa-arrow-left mr-3"></i>Backup</a
+        >
+        <a href="#" class="block text-gray-700 hover:text-blue-500">
+          <img
+            src="https://ssl.gstatic.com/gb/images/bar/al-icon.png"
+            alt="Settings"
+            class="inline-block w-4 h-4 mr-2"
+          />Settings
+        </a>
+        <a href="#" class="block text-gray-700 hover:text-blue-500">
+          <i class="fas fa-question mr-3"></i>Help & Feedback</a
+        >
+        <a href="#" class="block text-gray-700 hover:text-blue-500">
+          <i class="fas fa-cloud mr-3" aria-hidden="true"></i>Storage</a
+        >
+        <div class="h-2 rounded-full bg-blue-600" style="width: 10%"></div>
+        <div>
+          <p class="text-sm text-gray-600 mt-2">146.5 MB of 15 GB used</p>
+          <button
+            class="mt-2 text-blue-600 hover:text-blue-800 text-sm font-medium"
+          >
+            Get more storage
+          </button>
+        </div>
+      </nav>
+    </div>
+
+    <!-- Overlay -->
+    <div
+      id="overlay"
+      class="fixed inset-0 bg-black bg-opacity-50 hidden z-40"
+    ></div>
+
+    <!-- Main Content Area -->
+    <div class="flex flex-1 flex-col md:flex-row">
+      <!-- Left Sidebar - Hidden on mobile, visible on medium screens and up -->
+      <aside class="hidden md:block md:w-64 bg-white shadow-md p-4">
+        <button
+          class="w-[6.25rem] pt-[1.125rem] pr-5 pb-[1.125rem] pl-3 text-black-400 rounded-2xl flex items-center justify-center space-x-2 border border-blue-100 shadow-[0_1px_2px_rgba(60,64,67,0.3),0_1px_3px_1px_rgba(60,64,67,0.15)] hover:bg-blue-100 bg-white"
+        >
+          <i class="fas fa-plus text-black-400"></i>
+          <span class="font-medium">New</span>
+        </button>
+
+        <nav class="mt-6">
+          <a
+            href="#"
+            class="flex items-center px-4 py-3 text-gray-700 bg-blue-200 rounded-full"
+          >
+            <i class="fas fa-home mr-3 text-gray-700"></i>
+            <span class="font-normal">Home</span>
+          </a>
+          <a
+            href="#"
+            class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-full"
+          >
+            <i class="fas fa-hard-drive mr-3"></i>
+            <span class="font-normal">My Drive</span>
+          </a>
+          <a
+            href="#"
+            class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-full"
+          >
+            <i class="fas fa-laptop mr-3"></i>
+            <span class="font-normal">Computers</span>
+          </a>
+          <a
+            href="#"
+            class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-full"
+          >
+            <i class="fas fa-users mr-3"></i>
+            <span class="font-normal">Shared with me</span>
+          </a>
+          <a
+            href="#"
+            class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-full"
+          >
+            <i class="fas fa-clock mr-3"></i>
+            <span class="font-normal">Recent</span>
+          </a>
+          <a
+            href="#"
+            class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-full"
+          >
+            <i class="fas fa-star mr-3"></i>
+            <span class="font-normal">Starred</span>
+          </a>
+          <a
+            href="#"
+            class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-full"
+          >
+            <i class="fas fa-ban mr-3"></i>
+            <span class="font-normal">Spam</span>
+          </a>
+          <a
+            href="#"
+            class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-full"
+          >
+            <i class="fas fa-trash mr-3"></i>
+            <span class="font-normal">Bin</span>
+          </a>
+          <a
+            href="#"
+            class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-full"
+          >
+            <i class="fas fa-cloud mr-3"></i>
+            <span class="font-normal">Storage</span>
+          </a>
+        </nav>
+
+        <div class="mt-8 px-4">
+          <div class="w-full bg-gray-200 rounded-full h-2">
+            <div class="h-2 rounded-full bg-blue-600" style="width: 10%"></div>
+          </div>
+          <p class="text-sm text-gray-600 mt-2">146.5 MB of 15 GB used</p>
+          <button
+            class="mt-2 text-blue-600 hover:text-blue-800 text-sm font-medium"
+          >
+            Get more storage
+          </button>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main
+        class="flex-1 md:p-8 bg-white mx-2 md:mx-4 my-2 rounded-lg shadow-md"
+      >
+        <h1
+          class="font-drive text-[1.5rem] leading-[2rem] font-normal text-gray-800 mb-4 md:mb-6"
+        >
+          Welcome to Drive
+        </h1>
+
+        <div class="mb-6 md:mb-8">
+          <button
+            class="flex items-center space-x-2 text-gray-700 font-medium text-md md:text-lg focus:outline-none hover:bg-blue-200 hover:text-blue-800 hover:rounded-full p-2"
+            onclick="toggleSection('folders', this)"
+          >
+            <i
+              class="fas fa-chevron-right text-gray-600 text-base transition-transform duration-200"
+            ></i>
+            <span
+              class="text-base font-['Google_Sans_Flex','Google_Sans_Text','Google_Sans',Roboto,Arial,sans-serif]"
+            >
+              Suggested folders
+            </span>
+          </button>
+          <div
+            id="folders"
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-3 hidden"
+          >
+            <!-- Folder cards go here -->
+            <div class="bg-[#dfe3e7] rounded-lg shadow-md p-2">
+              <i class="fas fa-folder"></i>
+              <span class="font-semibold text-gray-800 ml-2">Folder Name</span>
+              <p class="text-gray-600 ml-7">In My Drive</p>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <button
+            class="flex items-center space-x-2 text-gray-700 font-medium text-md md:text-lg focus:outline-none hover:bg-blue-200 hover:text-blue-800 hover:rounded-full p-2"
+            onclick="toggleSection('files', this)"
+          >
+            <i
+              class="fas fa-chevron-right text-gray-600 text-base transition-transform duration-200"
+            ></i>
+            <span
+              class="text-base font-['Google_Sans_Flex','Google_Sans_Text','Google_Sans',Roboto,Arial,sans-serif]"
+            >
+              Suggested files
+            </span>
+          </button>
+          <div
+            id="files"
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-3 hidden"
+          >
+            <!-- File cards go here -->
+          </div>
+        </div>
+      </main>
+
+      <!-- Right Sidebar - Hidden on mobile and tablet, visible on large screens -->
+      <aside class="hidden lg:block w-16 bg-white shadow-md p-2">
+        <div class="flex flex-col items-center space-y-6 mt-4">
+          <!-- Calendar -->
+          <a
+            href="#"
+            class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100"
+          >
+            <img
+              src="https://www.gstatic.com/companion/icon_assets/calendar_2020q4_2x.png"
+              alt="Calendar"
+              class="w-6 h-6"
+            />
+          </a>
+
+          <!-- Notes -->
+          <a
+            href="#"
+            class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100"
+          >
+            <img
+              src="https://www.gstatic.com/companion/icon_assets/keep_2020q4v3_2x.png"
+              alt="Notes"
+              class="w-6 h-6"
+            />
+          </a>
+
+          <!-- Tasks -->
+          <a
+            href="#"
+            class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100"
+          >
+            <img
+              src="https://www.gstatic.com/companion/icon_assets/tasks_2021_2x.png"
+              alt="Tasks"
+              class="w-6 h-6"
+            />
+          </a>
+
+          <!-- Contacts -->
+          <a
+            href="#"
+            class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100"
+          >
+            <img
+              src="https://www.gstatic.com/companion/icon_assets/contacts_2022_2x.png"
+              alt="Contacts"
+              class="w-6 h-6"
+            />
+          </a>
+
+          <a
+            href="#"
+            class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100"
+          >
+            <i class="fas fa-plus text-gray-600"></i>
+          </a>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Bottom Bar - Mobile only -->
+    <nav
+      class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200"
+    >
+      <div class="flex justify-around">
+        <a href="#" class="flex flex-col items-center py-2 px-3 text-blue-600">
+          <i class="fas fa-home mb-1"></i>
+          <span class="text-xs">Home</span>
+        </a>
+        <a href="#" class="flex flex-col items-center py-2 px-3 text-gray-600">
+          <i class="fas fa-star mb-1"></i>
+          <span class="text-xs">Starred</span>
+        </a>
+        <a href="#" class="flex flex-col items-center py-2 px-3 text-gray-600">
+          <i class="fas fa-users mb-1"></i>
+          <span class="text-xs">Shared</span>
+        </a>
+        <a href="#" class="flex flex-col items-center py-2 px-3 text-gray-600">
+          <i class="fas fa-folder mb-1"></i>
+          <span class="text-xs">Files</span>
+        </a>
+      </div>
+    </nav>
+
+    <!-- Mobile menu button -->
+    <div class="md:hidden fixed bottom-16 right-4">
+      <button
+        class="w-14 h-14 bg-blue-600 text-white rounded-full flex items-center justify-center shadow-lg"
+      >
+        <i class="fas fa-plus text-xl"></i>
+      </button>
+    </div>
+
+    <script>
+      const menuBtn = document.getElementById("menuBtn");
+      const closeBtn = document.getElementById("closeBtn");
+      const mobileSidebar = document.getElementById("mobileSidebar");
+      const overlay = document.getElementById("overlay");
+
+      menuBtn.addEventListener("click", () => {
+        mobileSidebar.classList.remove("-translate-x-full");
+        overlay.classList.remove("hidden");
+      });
+
+      closeBtn.addEventListener("click", () => {
+        mobileSidebar.classList.add("-translate-x-full");
+        overlay.classList.add("hidden");
+      });
+
+      overlay.addEventListener("click", () => {
+        mobileSidebar.classList.add("-translate-x-full");
+        overlay.classList.add("hidden");
+      });
+
+      function toggleSection(id, btn) {
+        const section = document.getElementById(id);
+        const icon = btn.querySelector("i");
+
+        section.classList.toggle("hidden");
+        icon.classList.toggle("rotate-90"); // rotate arrow down
+      }
+    </script>
+  </body>
+</html>
