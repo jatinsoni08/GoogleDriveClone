@@ -30,7 +30,7 @@
 
   <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
     <img src="googledrive.png" alt="Google Drive Clone Desktop Preview" width="600"> <br>
-    <img src="mobileview.jpg" alt="Google Drive Clone Mobile Preview" width="300">
+    <img src="mobileview.png" alt="Google Drive Clone Mobile Preview" width="300">
   </div>
 </div>
 
